@@ -43,7 +43,7 @@ class Player(GameSprite):
 #игровая сцена
 win_width = 600
 win_height = 500
-window = display.set_mde(win_width, win_height)
+window = display.set_mode((win_width, win_height))
 
 back = (200, 255, 255)
 window.fill(back)
@@ -59,13 +59,48 @@ lose1 = font.render('ИГРОК 1 ПРОИГРАЛ', True, (149, 0, 0))
 lose2 = font.render('ИГРОК 2 ПРОИГРАЛ', True, (149, 0, 0))
 
 #Флаги. отвеч за сост игры
+game = True
+finish = False
+clock = time.Clock()
+FPS = 60
+
+speed_x = 3
+speed_y = 3
+
+while game:
+    for e in event.get():
+        if e.type == QUIT:
+            game = False
+
+    if not finish:
+        window.fill(back)
+        racket1.move_left()
+        racket2.move_right()
+        ball.rect.x += speed_x
+        ball.rect.y += speed_y
+
+        if sprite.collide_rect(racket1, ball) or sprite.collide_rect(racket2, ball):
+            speed_x *= -1
+            speed_y *= -1
 
 
+        if ball.rect.y > win_height - 50 or ball.rect.y < 0:
+            speed_y *= -1
 
+        if ball.rect.x < 0:
+                finish = True
+                window.blit(lose1, (200, 200))
 
+        if ball.rect.x > win_width:
+                finish = True
+                window.blit(lose2, (200, 200))
 
+        racket1.reset()
+        racket2.reset()
+        ball.reset()
 
-
+    display.update()
+    clock.tick(FPS)
 
 
 
